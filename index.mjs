@@ -1,42 +1,50 @@
-// imported dependencies
+// Imported dependencies
 import express from "express";
 import dotenv from "dotenv";
 import logger from "morgan";
+
+// Initialize dotenv to load environment variables
 dotenv.config();
-// import conn.mjs so that I connect to my db
+
+// Import the database connection
 import db from "./db/conn.mjs";
 
 // Importing routes
 import profileRouter from "./routes/profile.mjs";
 
-//set up port
+// Set up port
 const PORT = process.env.PORT || 5052;
 
-//create app
+// Create the Express app
 const app = express();
 
 // Middleware
-app.use(logger("dev"));
-app.use(express.json());
+app.use(logger("dev")); // Logs incoming requests for debugging
+app.use(express.json()); // Parses JSON request bodies
 
-//ROUTES
+// Root route
 app.get("/", (req, res) => {
-  res.send("<hi>Welcome to my the DanceCircle</h1>");
+  res.send("<h1>Welcome to DanceCircle</h1>");
 });
 
-//fill in my endpoint routes
+// API routes
 app.use("/api/profiles", profileRouter);
+app.use("api/sign", signRouter);
+app.use("api/search", searchRouter);
 
+// Handle undefined routes and redirect to the root
 app.get("/*", (req, res) => {
   res.redirect("/");
 });
 
-//Global error handling after the routes
-app.use((err, _req, res, next) => {
-  res.status(500).send("there was an issue on the server");
+// Global error handling middleware
+app.use((err, _req, res, _next) => {
+  console.error("Global error:", err); // Log the error for debugging
+  res.status(500).send("There was an issue on the server.");
 });
 
-// Start express server
+// Start the Express server
 app.listen(PORT, () => {
-  console.log("Server is runing on port: ${PORT}");
+  console.log(`Server is running on port: ${PORT}`);
 });
+s;

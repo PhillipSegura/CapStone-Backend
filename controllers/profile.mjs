@@ -1,6 +1,6 @@
 import Profile from "../models/profile.mjs";
 
-// Controller to create a new profile
+// Create a new profile
 export const createProfile = async (req, res) => {
   try {
     const { name, email, age, city, danceStyles, isTeacher } = req.body;
@@ -13,49 +13,56 @@ export const createProfile = async (req, res) => {
       isTeacher,
     });
     await profile.save();
-    res.status(201).json(profile);
+    res.status(201).json(profile); // Respond with the newly created profile
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message }); // Handle validation or other errors
   }
 };
 
-// Controller to get all profiles
+// Retrieve all profiles in the database
 export const getAllProfiles = async (req, res) => {
   try {
     const profiles = await Profile.find();
-    res.status(200).json(profiles);
+    res.status(200).json(profiles); // Respond with all profiles
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message }); // Handle server errors
   }
 };
 
-// Controller to get a specific profile by ID
+// Retrieve a single profile by its unique ID
 export const getProfileById = async (req, res) => {
   try {
     const profile = await Profile.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
-    res.status(200).json(profile);
+    res.status(200).json(profile); // Respond with the specific profile
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Controller to update a profile
+// Update an existing profile
 export const updateProfile = async (req, res) => {
   try {
-    const updates = req.body;
+    const { name, email, age, city, danceStyles, isTeacher } = req.body;
     const profile = await Profile.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
 
-    Object.assign(profile, updates);
+    // Update the profile fields only if provided
+    profile.name = name || profile.name;
+    profile.email = email || profile.email;
+    profile.age = age || profile.age;
+    profile.city = city || profile.city;
+    profile.danceStyles = danceStyles || profile.danceStyles;
+    profile.isTeacher = isTeacher !== undefined ? isTeacher : profile.isTeacher;
+
     await profile.save();
-    res.status(200).json(profile);
+    res.status(200).json(profile); // Respond with the updated profile
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// Controller to delete a profile
+// Delete a profile from the database
 export const deleteProfile = async (req, res) => {
   try {
     const profile = await Profile.findByIdAndDelete(req.params.id);
@@ -66,43 +73,74 @@ export const deleteProfile = async (req, res) => {
   }
 };
 
-// Controller to add a dance style to a profile
+// Add a new dance style to a specific profile
 export const addDanceStyle = async (req, res) => {
   try {
     const { danceStyle } = req.body;
     const profile = await Profile.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
 
-    profile.danceStyles.push(danceStyle);
-    await profile.save();
-    res.status(200).json(profile);
+    await profile.addDanceStyle(danceStyle);
+    res.status(200).json(profile); // Respond with the updated profile
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// Controller to remove a dance style from a profile
+// Remove a dance style from a specific profile
 export const removeDanceStyle = async (req, res) => {
   try {
     const { danceStyle } = req.body;
     const profile = await Profile.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
 
-    profile.danceStyles = profile.danceStyles.filter(
-      (style) => style !== danceStyle
-    );
-    await profile.save();
-    res.status(200).json(profile);
+    await profile.removeDanceStyle(danceStyle);
+    res.status(200).json(profile); // Respond with the updated profile
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// Controller to get all teachers
-export const getTeachers = async (req, res) => {
+// Seed the database with sample profiles
+export const seedProfiles = async (req, res) => {
   try {
-    const teachers = await Profile.find({ isTeacher: true });
-    res.status(200).json(teachers);
+    const profiles = [
+      {
+        name: "Big Deadend",
+        email: "BigDeadend@gmail.com",
+        age: 30,
+        city: "Phoenix",
+        danceStyles: ["Krump"],
+        isTeacher: true,
+      },
+      {
+        name: "Leah",
+        email: "Leah@gmail.com",
+        age: 32,
+        city: "Mesa",
+        danceStyles: ["CambellLocking"],
+        isTeacher: true,
+      },
+      {
+        name: "Rae Rae",
+        email: "RaeRae@gmail.com",
+        age: 33,
+        city: "Mesa",
+        danceStyles: ["House"],
+        isTeacher: true,
+      },
+      {
+        name: "King Charles",
+        email: "KingCharles@gmail.com",
+        age: 30,
+        city: "Phoenix",
+        danceStyles: ["ChicagoFootwork"],
+        isTeacher: true,
+      },
+    ];
+
+    await Profile.insertMany(profiles); // Insert sample profiles
+    res.status(201).json({ message: "Profiles seeded successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

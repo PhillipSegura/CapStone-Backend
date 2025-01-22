@@ -7,23 +7,33 @@ import {
   deleteProfile,
   addDanceStyle,
   removeDanceStyle,
-  getTeachers,
+  seedProfiles,
 } from "../controllers/profile.mjs";
 
 const router = express.Router();
 
-// Profile CRUD routes
+// Route for creating a new profile
 router.post("/", createProfile);
+
+// Route for fetching all profiles
 router.get("/", getAllProfiles);
+
+// Route for fetching a single profile by ID
 router.get("/:id", getProfileById);
+
+// Route for updating an existing profile
 router.put("/:id", updateProfile);
+
+// Route for deleting a profile
 router.delete("/:id", deleteProfile);
 
-// Dance styles routes
-router.post("/:id/dance-styles", addDanceStyle);
-router.delete("/:id/dance-styles", removeDanceStyle);
+// Route for adding a dance style to a profile
+router.post("/:id/danceStyles", addDanceStyle);
 
-// Get all teachers
-router.get("/teachers", getTeachers);
+// Route for removing a dance style from a profile
+router.delete("/:id/danceStyles", removeDanceStyle);
+
+// Route for seeding the database with sample profiles
+router.post("/seed", seedProfiles);
 
 export default router;
