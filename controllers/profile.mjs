@@ -1,10 +1,10 @@
-import Profile from "../models/profile.mjs";
+import Profiles from "../models/profile.mjs";
 
 // Create a new profile
 export const createProfile = async (req, res) => {
   try {
     const { name, email, age, city, danceStyles, isTeacher } = req.body;
-    const profile = new Profile({
+    const profile = new Profiles({
       name,
       email,
       age,
@@ -12,7 +12,7 @@ export const createProfile = async (req, res) => {
       danceStyles,
       isTeacher,
     });
-    await profile.save();
+    await Profiles.save();
     res.status(201).json(profile); // Respond with the newly created profile
   } catch (error) {
     res.status(400).json({ error: error.message }); // Handle validation or other errors
@@ -22,7 +22,7 @@ export const createProfile = async (req, res) => {
 // Retrieve all profiles in the database
 export const getAllProfiles = async (req, res) => {
   try {
-    const profiles = await Profile.find();
+    const profiles = await Profiles.find();
     res.status(200).json(profiles); // Respond with all profiles
   } catch (error) {
     res.status(500).json({ error: error.message }); // Handle server errors
@@ -32,7 +32,7 @@ export const getAllProfiles = async (req, res) => {
 // Retrieve a single profile by its unique ID
 export const getProfileById = async (req, res) => {
   try {
-    const profile = await Profile.findById(req.params.id);
+    const profile = await Profiles.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
     res.status(200).json(profile); // Respond with the specific profile
   } catch (error) {
@@ -44,7 +44,7 @@ export const getProfileById = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { name, email, age, city, danceStyles, isTeacher } = req.body;
-    const profile = await Profile.findById(req.params.id);
+    const profile = await Profiles.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
 
     // Update the profile fields only if provided
@@ -55,7 +55,7 @@ export const updateProfile = async (req, res) => {
     profile.danceStyles = danceStyles || profile.danceStyles;
     profile.isTeacher = isTeacher !== undefined ? isTeacher : profile.isTeacher;
 
-    await profile.save();
+    await Profiles.save();
     res.status(200).json(profile); // Respond with the updated profile
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -65,7 +65,7 @@ export const updateProfile = async (req, res) => {
 // Delete a profile from the database
 export const deleteProfile = async (req, res) => {
   try {
-    const profile = await Profile.findByIdAndDelete(req.params.id);
+    const profile = await Profiles.findByIdAndDelete(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
     res.status(200).json({ message: "Profile deleted successfully" });
   } catch (error) {
@@ -77,10 +77,10 @@ export const deleteProfile = async (req, res) => {
 export const addDanceStyle = async (req, res) => {
   try {
     const { danceStyle } = req.body;
-    const profile = await Profile.findById(req.params.id);
+    const profile = await Profiles.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
 
-    await profile.addDanceStyle(danceStyle);
+    await Profiles.addDanceStyle(danceStyle);
     res.status(200).json(profile); // Respond with the updated profile
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -91,10 +91,10 @@ export const addDanceStyle = async (req, res) => {
 export const removeDanceStyle = async (req, res) => {
   try {
     const { danceStyle } = req.body;
-    const profile = await Profile.findById(req.params.id);
+    const profile = await Profiles.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: "Profile not found" });
 
-    await profile.removeDanceStyle(danceStyle);
+    await Profiles.removeDanceStyle(danceStyle);
     res.status(200).json(profile); // Respond with the updated profile
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -103,45 +103,53 @@ export const removeDanceStyle = async (req, res) => {
 
 // Seed the database with sample profiles
 export const seedProfiles = async (req, res) => {
-  try {
-    const profiles = [
-      {
-        name: "Big Deadend",
-        email: "BigDeadend@gmail.com",
-        age: 30,
-        city: "Phoenix",
-        danceStyles: ["Krump"],
-        isTeacher: true,
-      },
-      {
-        name: "Leah",
-        email: "Leah@gmail.com",
-        age: 32,
-        city: "Mesa",
-        danceStyles: ["CambellLocking"],
-        isTeacher: true,
-      },
-      {
-        name: "Rae Rae",
-        email: "RaeRae@gmail.com",
-        age: 33,
-        city: "Mesa",
-        danceStyles: ["House"],
-        isTeacher: true,
-      },
-      {
-        name: "King Charles",
-        email: "KingCharles@gmail.com",
-        age: 30,
-        city: "Phoenix",
-        danceStyles: ["ChicagoFootwork"],
-        isTeacher: true,
-      },
-    ];
+  console.log("i am a seed");
+  const profiles = [
+    {
+      name: "Big Deadend",
+      email: "BigDeadend@gmail.com",
+      age: 30,
+      city: "Phoenix",
+      danceStyles: ["Krump"],
+      isTeacher: true,
+    },
+    {
+      name: "Leah",
+      email: "Leah@gmail.com",
+      age: 32,
+      city: "Mesa",
+      danceStyles: ["CambellLocking"],
+      isTeacher: true,
+    },
+    {
+      name: "Rae Rae",
+      email: "RaeRae@gmail.com",
+      age: 33,
+      city: "Mesa",
+      danceStyles: ["House"],
+      isTeacher: true,
+    },
+    {
+      name: "King Charles",
+      email: "KingCharles@gmail.com",
+      age: 30,
+      city: "Phoenix",
+      danceStyles: ["ChicagoFootwork"],
+      isTeacher: true,
+    },
+  ];
+  console.log(profiles);
+  await Profiles.create(profiles); // Insert sample profiles
+  res.status(201).json({ message: "Profiles seeded successfully" });
+};
 
-    await Profile.insertMany(profiles); // Insert sample profiles
-    res.status(201).json({ message: "Profiles seeded successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+export default {
+  seedProfiles,
+  getAllProfiles,
+  deleteProfile,
+  createProfile,
+  getProfileById,
+  updateProfile,
+  addDanceStyle,
+  removeDanceStyle,
 };

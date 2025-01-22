@@ -29,8 +29,6 @@ app.get("/", (req, res) => {
 
 // API routes
 app.use("/api/profiles", profileRouter);
-app.use("api/sign", signRouter);
-app.use("api/search", searchRouter);
 
 // Handle undefined routes and redirect to the root
 app.get("/*", (req, res) => {
@@ -47,4 +45,3 @@ app.use((err, _req, res, _next) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
 });
-s;
