@@ -3,6 +3,8 @@ import express from "express";
 import dotenv from "dotenv";
 import logger from "morgan";
 dotenv.config();
+// import conn.mjs so that I connect to my db
+import db from "./db/conn.mjs";
 
 //set up port
 const PORT = process.env.PORT || 5052;
