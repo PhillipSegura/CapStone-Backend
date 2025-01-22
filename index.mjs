@@ -6,6 +6,9 @@ dotenv.config();
 // import conn.mjs so that I connect to my db
 import db from "./db/conn.mjs";
 
+// Importing routes
+import profileRouter from "./routes/profile.mjs";
+
 //set up port
 const PORT = process.env.PORT || 5052;
 
@@ -14,11 +17,15 @@ const app = express();
 
 // Middleware
 app.use(logger("dev"));
+app.use(express.json());
 
 //ROUTES
 app.get("/", (req, res) => {
   res.send("<hi>Welcome to my the DanceCircle</h1>");
 });
+
+//fill in my endpoint routes
+app.use("/api/profiles", profileRouter);
 
 app.get("/*", (req, res) => {
   res.redirect("/");
