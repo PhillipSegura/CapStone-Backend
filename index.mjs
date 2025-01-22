@@ -2,6 +2,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import logger from "morgan";
+import cors from "cors";
 
 // Initialize dotenv to load environment variables
 dotenv.config();
@@ -19,6 +20,7 @@ const PORT = process.env.PORT || 5052;
 const app = express();
 
 // Middleware
+app.use(cors()); // Enable CORS for cross-origin requests
 app.use(logger("dev")); // Logs incoming requests for debugging
 app.use(express.json()); // Parses JSON request bodies
 
